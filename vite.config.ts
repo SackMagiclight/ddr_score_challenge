@@ -11,11 +11,11 @@ declare module "@remix-run/node" {
 }
 
 export default defineConfig({
-  base: '/ddr_score_challenge/',
+  base: '/',
   plugins: [
     remix({
       ssr: false,
-      basename: '/ddr_score_challenge/',
+      basename: '/',
       buildEnd(args) {
         if (!args.viteConfig.isProduction) return;
         const buildPath = args.viteConfig.build.outDir;
