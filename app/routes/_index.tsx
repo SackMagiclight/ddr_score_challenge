@@ -1,7 +1,7 @@
 import type { MetaFunction } from "@remix-run/node";
 import {useMemo} from "react";
 import {
-  Box, Button,
+  Box,
   Container,
   createTheme, Fade, IconButton, Link,
   Paper,
@@ -83,7 +83,7 @@ const theme = createTheme({
 
 export const clientLoader = async ({}: ClientLoaderFunctionArgs) => {
   const sid = `1lZSSNf4Zd0N2MdEPdB_CwnZLI7pr0gv9ZALxOneveag`;
-  const sheetName =  encodeURIComponent(`'4th (04/05-04/13)'`);
+  const sheetName =  encodeURIComponent(`'4th (終了)'`);
   const sheetData = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sid}/values/${sheetName}?key=${API_KEY}`);
   const jsonData = await sheetData.json();
   return {
