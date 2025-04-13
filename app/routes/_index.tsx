@@ -1,9 +1,9 @@
 import type { MetaFunction } from "@remix-run/node";
 import {useMemo} from "react";
 import {
-  Box,
+  Box, Button,
   Container,
-  createTheme, Fade, Link,
+  createTheme, Fade, IconButton, Link,
   Paper,
   Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow,
@@ -11,13 +11,14 @@ import {
   Typography
 } from "@mui/material";
 import {ClientLoaderFunctionArgs, useLoaderData} from "@remix-run/react";
+import YouTubeIcon from '@mui/icons-material/YouTube';
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 
 export const meta: MetaFunction = () => {
   return [
     { title: "DDR Score Challenge" },
-    { name: "description", content: "Welcome to Remix!" },
+    { name: "description", content: "DDR Score Challenge" },
   ];
 };
 
@@ -163,6 +164,9 @@ export default function Index() {
               {pageData.songs.map((song, index) => (
                     <Box
                         key={index}
+                        display={`flex`}
+                        justifyContent={`center`}
+                        alignItems={`center`}
                         flexGrow={1}
                         sx={{
                           backgroundColor: theme.palette.primary.main,
@@ -176,7 +180,10 @@ export default function Index() {
                     }}
 
                     >
-                      {`${song.title} (${song.difficulty})`}
+                      <Box>{`${song.title} (${song.difficulty})`}</Box>
+                      <IconButton disableRipple={true} size="large" href={`https://www.youtube.com/results?search_query=${song.title}+${song.mode}+${song.difficulty}`} target="_blank">
+                        <YouTubeIcon style={{ color: '#FF0032' }} />
+                      </IconButton>
                     </Box>
               ))}
             </Box>
