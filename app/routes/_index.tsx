@@ -20,15 +20,15 @@ import {
     MenuItem,
     Paper,
     Select,
-    SelectChangeEvent,
+    SelectChangeEvent, Stack,
     ThemeProvider,
     Typography
 } from "@mui/material";
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import {Ranking} from "~/component/Ranking";
-
-const API_KEY = import.meta.env.VITE_API_KEY;
-const sid = `1lZSSNf4Zd0N2MdEPdB_CwnZLI7pr0gv9ZALxOneveag`;
+import targetSheets from "~/static/targetSheets.json";
+import to from "await-to-js";
+import {getRankingSheets, RankingVM} from "~/service/sheets";
 
 export const meta: MetaFunction = () => {
     return [
@@ -52,186 +52,83 @@ const theme = createTheme({
             secondary: '#000000',
         },
     },
-    typography: {
-        fontFamily: 'Roboto, sans-serif',
-        h1: {
-            fontFamily: 'Montserrat, sans-serif',
-            fontWeight: 700,
-            fontSize: '2.5rem',
-            textTransform: 'uppercase',
-            letterSpacing: '2px',
-        },
-        body1: {
-            fontSize: '1.2rem',
-        },
-    },
-    components: {
-        MuiTableCell: {
-            styleOverrides: {
-                head: {
-                    backgroundColor: '#00DE90',
-                    color: '#000000',
-                    fontFamily: 'Montserrat, sans-serif',
-                    textTransform: 'uppercase',
-                },
-                body: {
-                    color: '#FFFFFF',
-                    fontSize: '1.1rem',
-                },
-            },
-        },
-        MuiTableRow: {
-            styleOverrides: {
-                root: {
-                    '&:nth-of-type(even)': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    },
-                    '&:hover': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                        transition: 'background 0.3s ease',
-                    },
-                },
-            },
-        },
-    },
-});
+})
 
 export default function Index() {
-    const targetSheets = [
-        '4th (終了)',
-        '3rd (終了)',
-        '2nd (終了)',
-        '1st (終了)',
-    ]
-    const [showPageDataTitle, setShowPageDataTitle] = useState(targetSheets[0]);
-    const [showPageData, setShowPageData] = useState<
-        {
-            title: string
-            startDate: string
-            songs: {
-                title: string
-                mode: string
-                difficulty: string
-            }[]
-            header: string[]
-            dataRow: string[][]
-        }>();
+    const [selectedRankingTitle, setSelectedRankingTitle] = useState(targetSheets[0]);
+    const [showingRankingData, setShowingRankingData] = useState<RankingVM>();
+    const [rankingDataCache, setRankingDataCache] = useState<{ [key: string]: RankingVM }>({});
 
-    const [pageDataCache, setPageDataCache] = useState<{
-        [key: string]: {
-            title: string
-            startDate: string
-            songs: {
-                title: string
-                mode: string
-                difficulty: string
-            }[]
-            header: string[]
-            dataRow: string[][]
-        }
-    }>({});
-    const handleChange = (event: SelectChangeEvent<string>) => {
+    const handleRankingTitleChange = (event: SelectChangeEvent<string>) => {
         const selectedTitle = event.target.value;
-        setShowPageDataTitle(selectedTitle);
+        setSelectedRankingTitle(selectedTitle);
     }
 
     useEffect(() => {
-        if (pageDataCache[showPageDataTitle]) {
-            setShowPageData(pageDataCache[showPageDataTitle]);
+        if (rankingDataCache[selectedRankingTitle]) {
+            setShowingRankingData(rankingDataCache[selectedRankingTitle]);
         } else {
             // fetch data from the API
             (async () => {
-                const sheetName = encodeURIComponent(`'${showPageDataTitle}'`);
-                const sheetData = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sid}/values/${sheetName}?key=${API_KEY}`);
-                const jsonData = await sheetData.json();
-                const title = jsonData.values[1][1] as string;
-                const startDate = jsonData.values[2][1] as string;
-                let songs: {
-                    title: string;
-                    mode: string;
-                    difficulty: string;
-                }[] = [];
-                for (let i = 5; jsonData.values[i].length != 0; i++) {
-                    const mddf = jsonData.values[i][4].split('/');
-                    songs.push({
-                        title: jsonData.values[i][1],
-                        mode: mddf[0].trim(),
-                        difficulty: mddf[1].trim(),
-                    });
+
+                const [getSheetDataError, sheetData] = await to(getRankingSheets(selectedRankingTitle));
+                if (getSheetDataError) {
+                    console.error(getSheetDataError);
+                    return;
                 }
 
-                const headerRow = jsonData.values.findIndex((v: string[]) => {
-                    return v.includes("順位")
+                setRankingDataCache((prev) => {
+                    return {...prev, [selectedRankingTitle]: sheetData}
                 });
-                const header = jsonData.values[headerRow].slice(1) as string[];
-                const dataRow: string[][] = []
-                for (let i = headerRow + 1; (jsonData.values[i]?.length ?? 0) != 0; i++) {
-                    dataRow.push(jsonData.values[i].slice(1));
-                }
-
-                const getVal = {
-                    title,
-                    startDate,
-                    songs,
-                    header,
-                    dataRow,
-                }
-
-                setPageDataCache((prev) => {
-                    const newVal = prev
-                    newVal[showPageDataTitle] = getVal
-                    return newVal
-                });
-                setShowPageData(getVal);
+                setShowingRankingData(sheetData);
             })();
         }
-    }, [showPageDataTitle])
+    }, [selectedRankingTitle])
 
-    const [open, setOpen] = useState(false);
-    const handleClickOpen = () => {
-        setOpen(true);
+    const [showRuleModal, setShowRuleModal] = useState(false);
+    const handleShowRuleModal = () => {
+        setShowRuleModal(true);
     };
-    const handleClose = () => {
-        setOpen(false);
+    const handleCloseRuleModal = () => {
+        setShowRuleModal(false);
     };
 
     return (
         <ThemeProvider theme={theme}>
-            <Box
-                sx={{
-                    minHeight: '100vh',
-                    background: theme.palette.background.default,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: 2,
-                }}
+            <Stack
+                justifyContent={"center"}
+                alignItems={"center"}
+                bgcolor={theme.palette.background.default}
+                minHeight={"100vh"}
+                p={2}
             >
-
-
                 <Container
                     maxWidth="lg"
                     component={Paper}
+                    elevation={4}
                     sx={{
-                        background: theme.palette.background.paper,
-                        borderRadius: 2,
-                        boxShadow: '0 10px 20px rgba(0, 0, 0, 0.5)',
-                        padding: 4,
-                        textAlign: 'center',
+                        textAlign: "center",
                     }}
                 >
                     {/* ヘッダー */}
-                    <Box sx={{mb: 4}}>
+                    <Box sx={{m: 4}}>
                         <Box>
-                            <Typography variant="h1" color="primary">
+                            <Typography
+                                variant="h3"
+                                color={theme.palette.primary.main}
+                                fontFamily={'Montserrat, sans-serif'}
+                                textTransform={"uppercase"}
+                                fontWeight={700}
+                                mb={-1}
+                            >
                                 DDR Score Challenge
                             </Typography>
-                            <FormControl variant="standard" sx={{m: 1, minWidth: 120}}>
+                            <FormControl variant="standard" sx={{minWidth: 120}}>
                                 <Select
                                     disableUnderline
                                     id="challenge-number"
-                                    value={showPageDataTitle}
-                                    onChange={handleChange}
+                                    value={selectedRankingTitle}
+                                    onChange={handleRankingTitleChange}
                                     sx={{
                                         '.MuiSvgIcon-root ': {
                                             fill: "#00DE90 !important",
@@ -240,33 +137,48 @@ export default function Index() {
                                 >
                                     {targetSheets.map((title, index) => (
                                         <MenuItem key={index} value={title}>
-                                            <Typography variant="h1" color="primary" whiteSpace={"wrap"}>{title}
+                                            <Typography
+                                                variant="h3"
+                                                color={theme.palette.primary.main}
+                                                fontFamily={'Montserrat, sans-serif'}
+                                                textTransform={"uppercase"}
+                                                fontWeight={700}
+                                                whiteSpace={"wrap"}
+                                            >
+                                                {title}
                                             </Typography>
                                         </MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>
                         </Box>
-
-                        {showPageData && (
-                            <Typography variant="body1" sx={{mt: 1}}>
-                                {showPageData.startDate}
+                        {showingRankingData && (
+                            <Typography variant="h5" color={"white"} my={2} >
+                                {showingRankingData.startDate}
                             </Typography>
                         )}
                     </Box>
-
-
-                    <Box display={"flex"} justifyContent={"center"}>
-                        <Typography variant="h5" color="primary" onClick={handleClickOpen}
-                                    style={{
-                                        cursor: 'pointer',
-                                        textDecoration: 'underline',
-                                    }}>
+                    <Stack>
+                        <Box
+                            display="flex"
+                            justifyContent="center"
+                        >
+                        <Typography
+                            variant="h5"
+                            component="div"
+                            color={theme.palette.primary.main}
+                            onClick={handleShowRuleModal}
+                            style={{
+                                cursor: 'pointer',
+                                textDecoration: 'underline',
+                            }}
+                        >
                             ＜共通ルール＞
                         </Typography>
+                        </Box>
                         <Dialog
-                            open={open}
-                            onClose={handleClose}
+                            open={showRuleModal}
+                            onClose={handleCloseRuleModal}
                             aria-labelledby="alert-dialog-title"
                             aria-describedby="alert-dialog-description"
                         >
@@ -274,15 +186,15 @@ export default function Index() {
                                 <img src={"./rule.png"} alt={"rule"}/>
                             </DialogContent>
                             <DialogActions>
-                                <Button onClick={handleClose}>CLOSE</Button>
+                                <Button onClick={handleCloseRuleModal}>CLOSE</Button>
                             </DialogActions>
                         </Dialog>
-                    </Box>
+                    </Stack>
 
-                    {showPageData && (
+                    {showingRankingData && (
                         <>
                             {/* 課題曲 */}
-                            <Card variant="outlined" sx={{
+                            <Card sx={{
                                 my: 2,
                                 backgroundColor: "#00DE90",
                             }}>
@@ -293,17 +205,22 @@ export default function Index() {
                                     justifyContent: "center",
                                     alignItems: "center",
                                 }}>
-                                    <Typography variant="h6" component="div" sx={{
-                                        color: "#000000",
-                                        pb: 0,
-                                    }}>
+                                    <Typography
+                                        variant="h6"
+                                        component="div"
+                                        color={"#000000"}
+                                        width={"100%"}
+                                        borderBottom={1}
+                                        borderColor={theme.palette.background.paper}
+                                        pb={0}
+                                    >
                                         課題曲
                                     </Typography>
                                     <List sx={{
                                         p: 0,
                                     }}>
-                                        {showPageData.songs.map((song, index) => (
-                                            <ListItem disablePadding dense>
+                                        {showingRankingData.songs.map((song, index) => (
+                                            <ListItem disablePadding dense key={index}>
                                                 <ListItemIcon>
                                                     <IconButton sx={{
                                                         py: 0,
@@ -331,14 +248,12 @@ export default function Index() {
 
                                 </CardContent>
                             </Card>
-
-
-                            <Ranking header={showPageData.header} dataRow={showPageData.dataRow}/>
+                            <Ranking header={showingRankingData.header} dataRow={showingRankingData.rankingList}/>
                         </>
                     )}
 
                     {/* フッター */}
-                    <Box sx={{mt: 4}}>
+                    <Box sx={{m: 4}}>
                         <Typography variant="body2" sx={{opacity: 0.8}}>
                             主催：TAKA.S |{' '}
                             <Link
@@ -352,7 +267,7 @@ export default function Index() {
                         </Typography>
                     </Box>
                 </Container>
-            </Box>
+            </Stack>
         </ThemeProvider>
     );
 }
