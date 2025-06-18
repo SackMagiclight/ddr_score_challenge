@@ -15,7 +15,31 @@ export type RankingVM = {
     rankingList: string[][]
 }
 
-export const getRankingSheets = async (sheetName: string): Promise<RankingVM> => {
+// シート情報を取得するための型
+type SheetInfo = {
+    title: string;
+}
+
+// 全シートの一覧を取得
+export const getAllSheets = async (): Promise<string[]> => {
+    const [getSpreadsheetError, spreadsheetData] = await to(fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?key=${API_KEY}`));
+    if (getSpreadsheetError) {
+        console.error(getSpreadsheetError);
+        throw getSpreadsheetError;
+    }
+
+    const [getJsonDataError, jsonData] = await to(spreadsheetData.json());
+    if (getJsonDataError) {
+        console.error(getJsonDataError);
+        throw getJsonDataError;
+    }
+
+    const sheets = jsonData.sheets as { properties: SheetInfo }[];
+    return sheets.map(sheet => sheet.properties.title);
+}
+
+// 特定のシートからデータを取得（内部使用）
+const getSheetData = async (sheetName: string): Promise<RankingVM> => {
     const encodedSheetName = encodeURIComponent(`'${sheetName}'`);
     const [getSheetDataError, sheetData] = await to(fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodedSheetName}?key=${API_KEY}`));
     if (getSheetDataError) {
@@ -58,4 +82,32 @@ export const getRankingSheets = async (sheetName: string): Promise<RankingVM> =>
         header,
         rankingList,
     }
+}
+
+// 全シートのデータを取得
+export const getAllRankingSheets = async (): Promise<RankingVM[]> => {
+    const [getSheetsError, sheetNames] = await to(getAllSheets());
+    if (getSheetsError) {
+        console.error('Failed to get sheet names:', getSheetsError);
+        throw getSheetsError;
+    }
+    
+    const results: RankingVM[] = [];
+    
+    for (const sheetName of sheetNames) {
+        const [getSheetDataError, sheetData] = await to(getSheetData(sheetName));
+        if (getSheetDataError) {
+            console.error(`Error fetching data for sheet ${sheetName}:`, getSheetDataError);
+            // エラーが発生したシートはスキップして続行
+            continue;
+        }
+        results.push(sheetData);
+    }
+    
+    return results;
+}
+
+// 後方互換性のために残す
+export const getRankingSheets = async (sheetName: string): Promise<RankingVM> => {
+    return getSheetData(sheetName);
 }

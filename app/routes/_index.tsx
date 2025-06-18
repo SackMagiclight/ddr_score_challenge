@@ -26,9 +26,8 @@ import {
 } from "@mui/material";
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import {Ranking} from "~/component/Ranking";
-import targetSheets from "~/static/targetSheets.json";
 import to from "await-to-js";
-import {getRankingSheets, RankingVM} from "~/service/sheets";
+import {getAllSheets, getRankingSheets, RankingVM} from "~/service/sheets";
 
 export const meta: MetaFunction = () => {
     return [
@@ -55,9 +54,26 @@ const theme = createTheme({
 })
 
 export default function Index() {
-    const [selectedRankingTitle, setSelectedRankingTitle] = useState(targetSheets[0]);
+    const [availableSheets, setAvailableSheets] = useState<string[]>([]);
+    const [selectedRankingTitle, setSelectedRankingTitle] = useState<string>("");
     const [showingRankingData, setShowingRankingData] = useState<RankingVM>();
     const [rankingDataCache, setRankingDataCache] = useState<{ [key: string]: RankingVM }>({});
+
+    // コンポーネントマウント時に利用可能なシート名を取得
+    useEffect(() => {
+        (async () => {
+            const [getSheetsError, sheets] = await to(getAllSheets());
+            if (getSheetsError) {
+                console.error("Failed to get sheets:", getSheetsError);
+                return;
+            }
+            
+            setAvailableSheets(sheets);
+            if (sheets.length > 0) {
+                setSelectedRankingTitle(sheets[0]);
+            }
+        })();
+    }, []);
 
     const handleRankingTitleChange = (event: SelectChangeEvent<string>) => {
         const selectedTitle = event.target.value;
@@ -65,6 +81,8 @@ export default function Index() {
     }
 
     useEffect(() => {
+        if (!selectedRankingTitle) return; // シートが選択されていない場合は何もしない
+        
         if (rankingDataCache[selectedRankingTitle]) {
             setShowingRankingData(rankingDataCache[selectedRankingTitle]);
         } else {
@@ -83,7 +101,7 @@ export default function Index() {
                 setShowingRankingData(sheetData);
             })();
         }
-    }, [selectedRankingTitle])
+    }, [selectedRankingTitle, rankingDataCache])
 
     const [showRuleModal, setShowRuleModal] = useState(false);
     const handleShowRuleModal = () => {
@@ -135,7 +153,7 @@ export default function Index() {
                                         }
                                     }}
                                 >
-                                    {targetSheets.map((title, index) => (
+                                    {availableSheets.map((title: string, index: number) => (
                                         <MenuItem key={index} value={title}>
                                             <Typography
                                                 variant="h3"
