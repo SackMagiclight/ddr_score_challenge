@@ -28,6 +28,7 @@ import YouTubeIcon from '@mui/icons-material/YouTube';
 import {Ranking} from "~/component/Ranking";
 import to from "await-to-js";
 import {getAllSheets, getRankingSheets, RankingVM} from "~/service/sheets";
+import { Ranking3 } from "~/component/Ranking3";
 
 export const meta: MetaFunction = () => {
     return [
@@ -266,7 +267,7 @@ export default function Index() {
 
                                 </CardContent>
                             </Card>
-                            <Ranking header={showingRankingData.header} dataRow={showingRankingData.rankingList}/>
+                            <Ranking3 header={showingRankingData.header} dataRow={showingRankingData.rankingList}/>
                         </>
                     )}
 

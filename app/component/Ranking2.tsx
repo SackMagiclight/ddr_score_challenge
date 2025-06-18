@@ -8,7 +8,9 @@ import {
     TableHead,
     TableRow,
     Theme,
-    ThemeProvider
+    ThemeProvider,
+    useMediaQuery,
+    useTheme
 } from "@mui/material";
 
 export type RankingProps = {
@@ -46,28 +48,6 @@ const tableTheme = createTheme({
     },
 });
 
-function getStickyCellStyle(width: number, zIndex:number, left:number) {
-    return {
-      position: "sticky",
-      left: left,
-      width: width,
-      zIndex: zIndex,
-    };
-  }
-
-const getStickyCellStyleFromRowNumber = (rowNumber: number, isCol: boolean) => {
-    switch (rowNumber) {
-        case 0:
-            return getStickyCellStyle(30, 100 - (isCol ? 1 : 0), 0);
-        case 1:
-            return getStickyCellStyle(120, 100 - (isCol ? 1 : 0), 30);
-        case 2:
-            return getStickyCellStyle(100, 100 - (isCol ? 1 : 0), 124);
-        default:
-            return {};
-    }
-}
-
 const getColStyleFromIndex = (index: number): SxProps<Theme> => {
     switch (index) {
         case 0:
@@ -77,28 +57,47 @@ const getColStyleFromIndex = (index: number): SxProps<Theme> => {
     }
 }
 
-export const Ranking = ({header, dataRow}: RankingProps) => {
+export const Ranking2 = ({header, dataRow}: RankingProps) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
     return (
         <ThemeProvider theme={tableTheme}>
             <TableContainer sx={{ maxHeight: 'calc(100vh - 200px)' }}>
                 <Table size="small" stickyHeader aria-label="ranking table">
                     <TableHead>
                         <TableRow>
-                            {header.map((header, index) => (<TableCell sx={{
-                                ...getStickyCellStyleFromRowNumber(index, false),
-                                ...{ "paddingLeft": "6px", "paddingRight": "6px", }
-                            }} key={index}>{header}</TableCell>))}
+                            {header.map((header, index) => {
+                                if (index > 2 && isMobile) {
+                                    return null; // モバイルでは3列目以降を非表示
+                                } else {
+                                    return (
+                                        <TableCell sx={{
+                                            ...getColStyleFromIndex(index),
+                                            ...{ "paddingLeft": "6px", "paddingRight": "6px", },
+                                            ...{ '&:last-child td, &:last-child th': { border: 0 } }
+                                        }} key={index}>{header}</TableCell>
+                                    )
+                                }
+                            })}
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {dataRow.map((row, index) => (
                             <TableRow key={index}>
-                                <>{row.map((c, index2) => (<TableCell  sx={{
-                                    ...getStickyCellStyleFromRowNumber(index2, true),
+                                <>{row.map((c, index2) => {
+                                    if (index2 > 2 && isMobile) {
+                                        return null; // モバイルでは3列目以降を非表示
+                                    } else {
+                                        return (
+                                            <TableCell  sx={{
                                     ...getColStyleFromIndex(index2),
                                     ...{ "paddingLeft": "6px", "paddingRight": "6px", },
                                     ...{ '&:last-child td, &:last-child th': { border: 0 } }
-                                }} key={index2}>{c}</TableCell>))}</>
+                                }} key={index2}>{c}</TableCell>
+                                        )
+                                    }
+                                })}</>
                             </TableRow>
                         ))}
                     </TableBody>
