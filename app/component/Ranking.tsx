@@ -103,13 +103,19 @@ export const Ranking = ({ header, dataRow }: RankingProps) => {
                     <TableHead>
                         <TableRow>
                             {
-                                [0, 1, 2].map((index) => {
-                                    const h = header[index];
+                                [0].map((index) => {
+                                    const order = header[0];
+                                    const name = header[1];
+                                    const total = header[2];
                                     return (<TableCell sx={{
                                         ...(isMobile ? getStickyCellStyleFromRowNumber(index, false) : {}),
                                         ...getColStyleFromIndex(index),
                                         ...{ "paddingLeft": "6px", "paddingRight": "6px", }
-                                    }} key={index}>{h}</TableCell>)
+                                    }} key={index}><Stack direction="row" spacing={0} alignItems="start" width={"100%"}>
+                                            <Box sx={{ width: "30px" }} >{order}</Box>
+                                            <Box sx={isMobile ? { width: "100px" } : { flexGrow: 1 }} >{name}</Box>
+                                            <Box sx={{ width: "70px" }} >{total}</Box>
+                                        </Stack></TableCell>)
                                 })
                             }
                             {indexSet.map((indexes, index) => {
@@ -140,15 +146,23 @@ export const Ranking = ({ header, dataRow }: RankingProps) => {
                             <TableRow key={index}>
                                 <>
                                     {
-                                        [0, 1, 2].map((index) => {
-                                            const h = row[index];
+                                        [0].map((index) => {
+                                            const order = row[0];
+                                            const name = row[1];
+                                            const total = row[2];
                                             const centerStyle = index === 2 ? { textAlign: 'center' } : {};
                                             return (<TableCell sx={{
                                                 ...(isMobile ? getStickyCellStyleFromRowNumber(index, true) : {}),
                                                 ...getColStyleFromIndex(index),
                                                 ...{ "paddingLeft": "6px", "paddingRight": "6px", },
                                                 ...{ '&:last-child td, &:last-child th': { border: 0 } }
-                                            }} key={index}>{h}</TableCell>)
+                                            }} key={index}>
+                                                <Stack direction="row" spacing={0} alignItems="start" width={"100%"}>
+                                                    <Box sx={{ width: "30px" }} >{order}</Box>
+                                                    <Box sx={isMobile ? { width: "100px" } : { flexGrow: 1 }} >{name}</Box>
+                                                    <Box sx={{ width: "70px" }} >{total}</Box>
+                                                </Stack>
+                                            </TableCell>)
                                         })
                                     }
                                     {indexSet.map((indexes, index) => {
@@ -185,7 +199,7 @@ export const Ranking = ({ header, dataRow }: RankingProps) => {
                                         })
                                     }</>
                             </TableRow>
-                            
+
                         ))}
                     </TableBody>
                 </Table>
