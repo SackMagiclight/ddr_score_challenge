@@ -30,25 +30,7 @@ import to from "await-to-js";
 import { getAllSheets, getRankingSheets, RankingVM } from "~/service/sheets";
 
 export const meta: MetaFunction = () => {
-    return [
-        { title: "DDR Score Challenge" },
-        { description: "DDR Score Challenge" },
-        {
-            property: "og:title",
-            content: "DDR Score Challenge",
-        },
-        { property: "og:description", content: "DDR Score Challenge" },
-        { property: "og:image", content: "https://ddr-score-challenge.gaftalk.com/logo.png" },
-        { property: "og:url", content: "https://ddr-score-challenge.gaftalk.com/" },
-        { property: "og:type", content: "website" },
-        { property: "og:site_name", content: "DDR Score Challenge" },
-        { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: "DDR Score Challenge" },
-        { name: "twitter:description", content: "DDR Score Challenge" },
-        { name: "twitter:image", content: "https://ddr-score-challenge.gaftalk.com/logo.png" },
-        { name: "twitter:site", content: "@takas_kzn" },
-        { name: "twitter:creator", content: "@takas_kzn" },
-    ];
+    return [];
 };
 
 // カスタムテーマの作成
