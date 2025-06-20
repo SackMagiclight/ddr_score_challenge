@@ -1,5 +1,5 @@
-import type {MetaFunction} from "@remix-run/node";
-import {useEffect, useState} from "react";
+import type { MetaFunction } from "@remix-run/node";
+import { useEffect, useState } from "react";
 import {
     Box,
     Button,
@@ -25,21 +25,29 @@ import {
     Typography
 } from "@mui/material";
 import ArrowDropDownSharpIcon from '@mui/icons-material/ArrowDropDownSharp';
-import {Ranking} from "~/component/Ranking";
+import { Ranking } from "~/component/Ranking";
 import to from "await-to-js";
-import {getAllSheets, getRankingSheets, RankingVM} from "~/service/sheets";
+import { getAllSheets, getRankingSheets, RankingVM } from "~/service/sheets";
 
 export const meta: MetaFunction = () => {
     return [
-        {title: "DDR Score Challenge"},
+        { title: "DDR Score Challenge" },
+        { description: "DDR Score Challenge" },
         {
             property: "og:title",
             content: "DDR Score Challenge",
         },
-        {property: "og:description", content: "DDR Score Challenge"},
-        {property: "og:image", content: "https://ddr-score-challenge.gaftalk.com/logo.png"},
-        {property: "og:url", content: "https://ddr-score-challenge.gaftalk.com/"},
-        {name: "description", content: "DDR Score Challenge"},
+        { property: "og:description", content: "DDR Score Challenge" },
+        { property: "og:image", content: "https://ddr-score-challenge.gaftalk.com/logo.png" },
+        { property: "og:url", content: "https://ddr-score-challenge.gaftalk.com/" },
+        { property: "og:type", content: "website" },
+        { property: "og:site_name", content: "DDR Score Challenge" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: "DDR Score Challenge" },
+        { name: "twitter:description", content: "DDR Score Challenge" },
+        { name: "twitter:image", content: "https://ddr-score-challenge.gaftalk.com/logo.png" },
+        { name: "twitter:site", content: "@takas_kzn" },
+        { name: "twitter:creator", content: "@takas_kzn" },
     ];
 };
 
@@ -74,7 +82,7 @@ export default function Index() {
                 console.error("Failed to get sheets:", getSheetsError);
                 return;
             }
-            
+
             setAvailableSheets(sheets);
             if (sheets.length > 0) {
                 setSelectedRankingTitle(sheets[0]);
@@ -97,7 +105,7 @@ export default function Index() {
             return (
                 <Stack direction="column" spacing={-1} alignItems="center" justifyContent="center">
                     <Typography variant="h6">{dateParts[0].trim()}</Typography>
-                    <ArrowDropDownSharpIcon fontSize="large"/>
+                    <ArrowDropDownSharpIcon fontSize="large" />
                     <Typography variant="h6">{dateParts[1].trim()}</Typography>
                 </Stack>
             );
@@ -108,7 +116,7 @@ export default function Index() {
 
     useEffect(() => {
         if (!selectedRankingTitle) return; // シートが選択されていない場合は何もしない
-        
+
         if (rankingDataCache[selectedRankingTitle]) {
             setShowingRankingData(rankingDataCache[selectedRankingTitle]);
         } else {
@@ -122,7 +130,7 @@ export default function Index() {
                 }
 
                 setRankingDataCache((prev) => {
-                    return {...prev, [selectedRankingTitle]: sheetData}
+                    return { ...prev, [selectedRankingTitle]: sheetData }
                 });
                 setShowingRankingData(sheetData);
             })();
@@ -155,7 +163,7 @@ export default function Index() {
                     }}
                 >
                     {/* ヘッダー */}
-                    <Box sx={{m: 2}}>
+                    <Box sx={{ m: 2 }}>
                         <Box>
                             <img
                                 src="./logo.png"
@@ -166,8 +174,8 @@ export default function Index() {
                                     height: 'auto',
                                     margin: '0 auto',
                                 }}
-                             />
-                            <FormControl variant="standard" sx={{minWidth: 120}}>
+                            />
+                            <FormControl variant="standard" sx={{ minWidth: 120 }}>
                                 <Select
                                     disableUnderline
                                     id="challenge-number"
@@ -207,18 +215,18 @@ export default function Index() {
                             display="flex"
                             justifyContent="center"
                         >
-                        <Typography
-                            variant="h5"
-                            component="div"
-                            color={theme.palette.primary.main}
-                            onClick={handleShowRuleModal}
-                            style={{
-                                cursor: 'pointer',
-                                textDecoration: 'underline',
-                            }}
-                        >
-                            ＜共通ルール＞
-                        </Typography>
+                            <Typography
+                                variant="h5"
+                                component="div"
+                                color={theme.palette.primary.main}
+                                onClick={handleShowRuleModal}
+                                style={{
+                                    cursor: 'pointer',
+                                    textDecoration: 'underline',
+                                }}
+                            >
+                                ＜共通ルール＞
+                            </Typography>
                         </Box>
                         <Dialog
                             open={showRuleModal}
@@ -227,7 +235,7 @@ export default function Index() {
                             aria-describedby="alert-dialog-description"
                         >
                             <DialogContent>
-                                <img src={"./rule.png"} alt={"rule"}/>
+                                <img src={"./rule.png"} alt={"rule"} />
                             </DialogContent>
                             <DialogActions>
                                 <Button onClick={handleCloseRuleModal}>CLOSE</Button>
@@ -280,26 +288,26 @@ export default function Index() {
                                                     >
                                                         {`${song.title} (${song.difficulty})`}
                                                     </Box>
-                                                }/>
+                                                } />
                                             </ListItem>
                                         ))}
                                     </List>
 
                                 </CardContent>
                             </Card>
-                            <Ranking header={showingRankingData.header} dataRow={showingRankingData.rankingList}/>
+                            <Ranking header={showingRankingData.header} dataRow={showingRankingData.rankingList} />
                         </>
                     )}
 
                     {/* フッター */}
-                    <Box sx={{m: 4}}>
-                        <Typography variant="body2" sx={{opacity: 0.8}}>
+                    <Box sx={{ m: 4 }}>
+                        <Typography variant="body2" sx={{ opacity: 0.8 }}>
                             主催：TAKA.S |{' '}
                             <Link
                                 href="https://x.com/takas_kzn"
                                 target="_blank"
                                 color="primary"
-                                sx={{textDecoration: 'none', '&:hover': {textDecoration: 'underline'}}}
+                                sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
                             >
                                 Xで連絡
                             </Link>
