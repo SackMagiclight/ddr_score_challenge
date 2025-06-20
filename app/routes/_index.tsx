@@ -32,6 +32,13 @@ import {getAllSheets, getRankingSheets, RankingVM} from "~/service/sheets";
 export const meta: MetaFunction = () => {
     return [
         {title: "DDR Score Challenge"},
+        {
+            property: "og:title",
+            content: "DDR Score Challenge",
+        },
+        {property: "og:description", content: "DDR Score Challenge"},
+        {property: "og:image", content: "https://ddr-score-challenge.gaftalk.com/logo.png"},
+        {property: "og:url", content: "https://ddr-score-challenge.gaftalk.com/"},
         {name: "description", content: "DDR Score Challenge"},
     ];
 };
@@ -148,13 +155,13 @@ export default function Index() {
                     }}
                 >
                     {/* ヘッダー */}
-                    <Box sx={{m: 4}}>
+                    <Box sx={{m: 2}}>
                         <Box>
                             <img
                                 src="./logo.png"
                                 alt="DDR Score Challenge Logo"
+                                className="max-w-full md:max-w-[80%]"
                                 style={{
-                                    maxWidth: '80%',
                                     maxHeight: '200px',
                                     height: 'auto',
                                     margin: '0 auto',
