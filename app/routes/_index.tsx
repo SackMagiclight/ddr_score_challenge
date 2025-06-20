@@ -217,7 +217,7 @@ export default function Index() {
                             aria-describedby="alert-dialog-description"
                         >
                             <DialogContent>
-                                <img src={"./rule.png"} alt={"rule"} />
+                                <img src={"./rule.jpg"} alt={"rule"} />
                             </DialogContent>
                             <DialogActions>
                                 <Button onClick={handleCloseRuleModal}>CLOSE</Button>
@@ -278,6 +278,11 @@ export default function Index() {
                                 </CardContent>
                             </Card>
                             <Ranking header={showingRankingData.header} dataRow={showingRankingData.rankingList} />
+                            <Box
+                                sx={{
+                                    textAlign: 'right',
+                                }}
+                            >{showingRankingData.lastUpdated}</Box>
                         </>
                     )}
 

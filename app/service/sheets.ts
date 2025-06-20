@@ -13,6 +13,7 @@ export type RankingVM = {
     }[]
     header: string[]
     rankingList: string[][]
+    lastUpdated: string // 最終更新日
 }
 
 // シート情報を取得するための型
@@ -66,6 +67,8 @@ const getSheetData = async (sheetName: string): Promise<RankingVM> => {
         });
     }
 
+    const lastUpdated = jsonValues[10][7];
+
     const headerRowIndex = jsonValues.findIndex((v: string[]) => {
         return v.includes("順位")
     });
@@ -81,6 +84,7 @@ const getSheetData = async (sheetName: string): Promise<RankingVM> => {
         songs,
         header,
         rankingList,
+        lastUpdated: lastUpdated || '', // lastUpdatedが存在しない場合は空文字列を設定
     }
 }
 
