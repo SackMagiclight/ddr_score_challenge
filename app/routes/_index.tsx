@@ -24,7 +24,7 @@ import {
     ThemeProvider,
     Typography
 } from "@mui/material";
-import YouTubeIcon from '@mui/icons-material/YouTube';
+import ArrowDropDownSharpIcon from '@mui/icons-material/ArrowDropDownSharp';
 import {Ranking} from "~/component/Ranking";
 import to from "await-to-js";
 import {getAllSheets, getRankingSheets, RankingVM} from "~/service/sheets";
@@ -78,6 +78,25 @@ export default function Index() {
     const handleRankingTitleChange = (event: SelectChangeEvent<string>) => {
         const selectedTitle = event.target.value;
         setSelectedRankingTitle(selectedTitle);
+    }
+
+    const getDatetimeComponent = (dateString: string) => {
+        // 「〜」区切りの日付文字列を分割
+        const dateParts = dateString.split('～');
+        if (dateParts.length !== 2) {
+            return <span>{dateString}</span>; // フォーマットが不正な場合はそのまま表示
+        } else {
+            // 開始と終了を3行で表示
+            return (
+                <Stack direction="column" spacing={-1} alignItems="center" justifyContent="center">
+                    <Typography variant="h6">{dateParts[0].trim()}</Typography>
+                    <ArrowDropDownSharpIcon fontSize="large"/>
+                    <Typography variant="h6">{dateParts[1].trim()}</Typography>
+                </Stack>
+            );
+
+        }
+
     }
 
     useEffect(() => {
@@ -172,7 +191,7 @@ export default function Index() {
                         </Box>
                         {showingRankingData && (
                             <Typography variant="h5" color={"white"} my={2} >
-                                {showingRankingData.startDate}
+                                {getDatetimeComponent(showingRankingData.startDate)}
                             </Typography>
                         )}
                     </Box>
@@ -239,20 +258,15 @@ export default function Index() {
                                     }}>
                                         {showingRankingData.songs.map((song, index) => (
                                             <ListItem disablePadding dense key={index}>
-                                                <ListItemIcon>
-                                                    <IconButton sx={{
-                                                        py: 0,
-                                                    }} disableRipple={true} size="large"
-                                                                href={`https://www.youtube.com/results?search_query=${song.title}+${song.mode}+${song.difficulty}`}
-                                                                target="_blank">
-                                                        <YouTubeIcon style={{color: '#FF0032'}}/>
-                                                    </IconButton>
-                                                </ListItemIcon>
                                                 <ListItemText primary={
                                                     <Box
                                                         sx={{
-                                                            fontSize: '2rem',
-                                                            lineHeight: '2rem',
+                                                            md: {
+                                                                fontSize: '2rem',
+                                                                lineHeight: '2rem',
+                                                            },
+                                                            fontSize: '1.7rem',
+                                                            lineHeight: '1.7rem',
                                                             color: "#000000",
                                                             fontFamily: '"Special Gothic Condensed One", sans-serif',
                                                         }}

@@ -1,5 +1,7 @@
 import {
+    Box,
     createTheme,
+    Stack,
     SxProps,
     Table,
     TableBody,
@@ -8,8 +10,11 @@ import {
     TableHead,
     TableRow,
     Theme,
-    ThemeProvider
+    ThemeProvider,
+    useMediaQuery,
+    useTheme
 } from "@mui/material";
+import dayjs from "dayjs";
 
 export type RankingProps = {
     header: string[]; dataRow: string[][];
@@ -46,14 +51,14 @@ const tableTheme = createTheme({
     },
 });
 
-function getStickyCellStyle(width: number, zIndex:number, left:number) {
+function getStickyCellStyle(width: number, zIndex: number, left: number) {
     return {
-      position: "sticky",
-      left: left,
-      width: width,
-      zIndex: zIndex,
+        position: "sticky",
+        left: left,
+        width: width,
+        zIndex: zIndex,
     };
-  }
+}
 
 const getStickyCellStyleFromRowNumber = (rowNumber: number, isCol: boolean) => {
     switch (rowNumber) {
@@ -62,7 +67,7 @@ const getStickyCellStyleFromRowNumber = (rowNumber: number, isCol: boolean) => {
         case 1:
             return getStickyCellStyle(120, 100 - (isCol ? 1 : 0), 30);
         case 2:
-            return getStickyCellStyle(100, 100 - (isCol ? 1 : 0), 124);
+            return getStickyCellStyle(130, 100 - (isCol ? 1 : 0), 124);
         default:
             return {};
     }
@@ -71,35 +76,116 @@ const getStickyCellStyleFromRowNumber = (rowNumber: number, isCol: boolean) => {
 const getColStyleFromIndex = (index: number): SxProps<Theme> => {
     switch (index) {
         case 0:
-            return { textAlign: 'right' };
+            return { textAlign: 'center' };
+        case 2:
+            return { textAlign: 'center', fontWeight: 'bold' };
         default:
             return {};
     }
 }
 
-export const Ranking = ({header, dataRow}: RankingProps) => {
+export const Ranking = ({ header, dataRow }: RankingProps) => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const datetimeColIndex = header.findIndex((h) => h.includes("更新日時"));
+    const indexSet = [] as number[][];
+    for (let i = 3; i < header.length; i = i + 2) {
+        if (i === datetimeColIndex) {
+            break
+        } else {
+            indexSet.push([i, i + 1]);
+        }
+    }
     return (
         <ThemeProvider theme={tableTheme}>
             <TableContainer sx={{ maxHeight: 'calc(100vh - 200px)' }}>
                 <Table size="small" stickyHeader aria-label="ranking table">
                     <TableHead>
                         <TableRow>
-                            {header.map((header, index) => (<TableCell sx={{
-                                ...getStickyCellStyleFromRowNumber(index, false),
-                                ...{ "paddingLeft": "6px", "paddingRight": "6px", }
-                            }} key={index}>{header}</TableCell>))}
+                            {
+                                [0, 1, 2].map((index) => {
+                                    const h = header[index];
+                                    return (<TableCell sx={{
+                                        ...(isMobile ? getStickyCellStyleFromRowNumber(index, false) : {}),
+                                        ...getColStyleFromIndex(index),
+                                        ...{ "paddingLeft": "6px", "paddingRight": "6px", }
+                                    }} key={index}>{h}</TableCell>)
+                                })
+                            }
+                            {indexSet.map((indexes, index) => {
+                                const h = header[indexes[0]];
+                                const centerStyle = indexes.length > 1 ? { textAlign: 'center' } : {};
+                                return (
+                                    <TableCell sx={{
+                                        ...centerStyle,
+                                        ...{ "paddingLeft": "6px", "paddingRight": "6px", }
+                                    }} key={index}>{h}</TableCell>
+                                )
+
+                            })}
+                            {
+                                [datetimeColIndex].map((index) => {
+                                    const h = header[index];
+                                    return (<TableCell sx={{
+                                        ...(isMobile ? getStickyCellStyleFromRowNumber(index, false) : {}),
+                                        ...getColStyleFromIndex(index),
+                                        ...{ "paddingLeft": "6px", "paddingRight": "6px", }
+                                    }} key={index}>{h}</TableCell>)
+                                })
+                            }
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {dataRow.map((row, index) => (
                             <TableRow key={index}>
-                                <>{row.map((c, index2) => (<TableCell  sx={{
-                                    ...getStickyCellStyleFromRowNumber(index2, true),
-                                    ...getColStyleFromIndex(index2),
-                                    ...{ "paddingLeft": "6px", "paddingRight": "6px", },
-                                    ...{ '&:last-child td, &:last-child th': { border: 0 } }
-                                }} key={index2}>{c}</TableCell>))}</>
+                                <>
+                                    {
+                                        [0, 1, 2].map((index) => {
+                                            const h = row[index];
+                                            const centerStyle = index === 2 ? { textAlign: 'center' } : {};
+                                            return (<TableCell sx={{
+                                                ...(isMobile ? getStickyCellStyleFromRowNumber(index, true) : {}),
+                                                ...getColStyleFromIndex(index),
+                                                ...{ "paddingLeft": "6px", "paddingRight": "6px", },
+                                                ...{ '&:last-child td, &:last-child th': { border: 0 } }
+                                            }} key={index}>{h}</TableCell>)
+                                        })
+                                    }
+                                    {indexSet.map((indexes, index) => {
+                                        const h1 = indexes.length === 1 ? row[indexes[0]] : `(${row[indexes[0]]})`;
+                                        const h2 = indexes.length > 1 ? row[indexes[1]] : null;
+                                        const centerStyle = indexes.length > 1 ? { textAlign: 'center' } : {};
+                                        return (
+                                            <TableCell sx={{
+                                                ...{ "paddingLeft": "6px", "paddingRight": "6px", },
+                                                ...centerStyle,
+                                                ...{ '&:last-child td, &:last-child th': { border: 0 } }
+                                            }} key={index}>
+                                                <div>{h2}</div>
+                                                <div>{h1}</div>
+                                            </TableCell>
+                                        )
+
+                                    })}
+                                    {
+                                        [datetimeColIndex].map((index) => {
+                                            const h = row[index];
+                                            const d = dayjs(h);
+                                            return (<TableCell sx={{
+                                                ...(isMobile ? getStickyCellStyleFromRowNumber(index, true) : {}),
+                                                ...getColStyleFromIndex(index),
+                                                ...{ "paddingLeft": "6px", "paddingRight": "6px", },
+                                                ...{ '&:last-child td, &:last-child th': { border: 0 } }
+                                            }} key={index}>
+                                                <Stack direction="column" spacing={0} alignItems="end" width={"fit-content"}>
+                                                    <Box>{d.format("YYYY-MM-DD")}</Box>
+                                                    <Box>{d.format("HH:mm:ss")}</Box>
+                                                </Stack>
+                                            </TableCell>)
+                                        })
+                                    }</>
                             </TableRow>
+                            
                         ))}
                     </TableBody>
                 </Table>
