@@ -111,7 +111,7 @@ export const Ranking = ({ header, dataRow }: RankingProps) => {
                                         ...(isMobile ? getStickyCellStyleFromRowNumber(index, false) : {}),
                                         ...getColStyleFromIndex(index),
                                         ...{ "paddingLeft": "6px", "paddingRight": "6px", }
-                                    }} key={index}><Stack direction="row" spacing={0} alignItems="start" width={"100%"}>
+                                    }} key={index}><Stack direction="row" spacing={0} alignItems="center" width={"100%"}>
                                             <Box sx={{ width: "30px" }} >{order}</Box>
                                             <Box sx={isMobile ? { width: "100px" } : { flexGrow: 1 }} >{name}</Box>
                                             <Box sx={{ width: "70px" }} >{total}</Box>
