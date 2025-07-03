@@ -36,32 +36,25 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
         return value ? parseFloat(value).toLocaleString() : 0;
     }
 
-    return (
-        <Box sx={{ mb: 3 }}>
-            <Typography
-                variant="h6"
-                sx={{
-                    color: theme.palette.primary.main,
-                    fontWeight: 'bold',
-                    textAlign: 'center'
-                }}
-            >
-                スコア統計
-            </Typography>
+    const totalMax = avarageRow.length ? maxValue(avarageRow[averageKeys[0]]?.max)  || '-' : '-';
 
+    return (
+        <Box sx={{ mt: 3 }}>
             <Paper
                 elevation={2}
+                sx={{ backgroundColor: "inherit" }}
             >
-                <TableContainer>
+                <TableContainer sx={{ backgroundColor: "inherit"}}>
                     <Table size="small" sx={{ border : '1px solid', borderColor: theme.palette.grey[300] }}>
                         <TableHead>
                             <TableRow>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', backgroundColor: theme.palette.grey[300], color: 'white'}}>
+                                <TableCell align="center" sx={{ fontWeight: 'bold',  color: theme.palette.text.secondary , backgroundColor: theme.palette.primary.main }}>
+                                    スコア統計
                                 </TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', backgroundColor: theme.palette.primary.main, color: theme.palette.common.black}}>
+                                <TableCell align="center" sx={{ fontWeight: 'bold',  color: theme.palette.text.secondary , backgroundColor: theme.palette.primary.main }}>
                                     平均値
                                 </TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', backgroundColor: theme.palette.secondary.light, color: theme.palette.common.black}}>
+                                <TableCell align="center" sx={{ fontWeight: 'bold',  color: theme.palette.text.secondary , backgroundColor: theme.palette.primary.main }}>
                                     中央値
                                 </TableCell>
                             </TableRow>
@@ -73,43 +66,33 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
                                 const title = item.replace(/平均値|中央値/g, '').trim();
                                 const maxAverage = maxValue(avarageRow[averageKey]?.max) || '-';
                                 const averageData = avarageRow[averageKey];
-                                const avarageMaxDiff = (parseFloat(avarageRow[averageKey]?.max?.split(" ")[1]) || 0) - (parseFloat(averageData?.value?.replace(/,/g, "")) || 0);
                                 const medianData = medianRow[medianKey];
-                                const medianMaxDiff = (parseFloat(medianRow[medianKey]?.max?.split(" ")[1]) || 0) - (parseFloat(medianData?.value?.replace(/,/g, "")) || 0);
 
                                 return (
                                     <TableRow key={item}>
-                                        <TableCell align="center" sx={{ fontWeight: 'medium', backgroundColor: theme.palette.grey[50], color: theme.palette.common.black }}>
+                                        <TableCell align="center" sx={{ fontWeight: 'medium', color: theme.palette.common.white, }}>
                                             <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: isMobile ? "0.6rem" : '1rem', }}>
-                                                {title}
+                                                {title}（MAX {maxAverage || '-'}）
                                             </Typography>
-                                            <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: isMobile ? "0.6rem" : '1rem', }}>
+                                            {/* <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: isMobile ? "0.6rem" : '1rem', }}>
                                                 （MAX {maxAverage || '-'}）
-                                            </Typography>
+                                            </Typography> */}
                                         </TableCell>
                                         <TableCell align="center" sx={{
                                             whiteSpace: 'nowrap',
                                             fontWeight: 'bold',
-                                            color: theme.palette.common.black,
+                                            color: theme.palette.common.white,
                                             fontSize: isMobile ? "0.6rem" : '1rem',
-                                            backgroundColor: theme.palette.primary.light,
                                         }}>
                                             <Box>{averageData?.value || '-'}</Box>
-                                            <Box sx={{ fontSize: isMobile ? "0.5rem" : '0.8rem', color: theme.palette.grey[600] }}>
-                                                {`MAX -${avarageMaxDiff.toLocaleString()}`}
-                                            </Box>
                                         </TableCell>
                                         <TableCell align="center" sx={{
                                             whiteSpace: 'nowrap',
                                             fontWeight: 'bold',
-                                            color: theme.palette.common.black,
+                                            color: theme.palette.common.white,
                                             fontSize: isMobile ? "0.6rem" : '1rem',
-                                            backgroundColor: "#e9baf2",
                                         }}>
                                             <Box>{medianData?.value || '-'}</Box>
-                                            <Box sx={{ fontSize: isMobile ? "0.5rem" : '0.8rem', color: theme.palette.grey[600] }}>
-                                                {`MAX -${medianMaxDiff.toLocaleString()}`}
-                                            </Box>
                                         </TableCell>
                                     </TableRow>
                                 );

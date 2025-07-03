@@ -101,16 +101,17 @@ export default function Index() {
                     {!isLoadingSheets && !isLoadingData && showingRankingData && (
                         <>
                             <ChallengeSongs songs={showingRankingData.songs} />
-                            <ScoreStatistics 
-                                avarageRow={showingRankingData.avarageRow}
-                                medianRow={showingRankingData.medianRow}
-                            />
                             <Ranking header={showingRankingData.header} dataRow={showingRankingData.rankingList} />
                             <Box
                                 sx={{
                                     textAlign: 'right',
                                 }}
                             >{showingRankingData.lastUpdated}</Box>
+                            <ScoreStatistics 
+                                avarageRow={showingRankingData.avarageRow}
+                                medianRow={showingRankingData.medianRow}
+                            />
+                            
                         </>
                     )}
 
