@@ -36,8 +36,6 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
         return value ? parseFloat(value).toLocaleString() : 0;
     }
 
-    const totalMax = avarageRow.length ? maxValue(avarageRow[averageKeys[0]]?.max)  || '-' : '-';
-
     return (
         <Box sx={{ mt: 3 }}>
             <Paper
@@ -45,40 +43,44 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
                 sx={{ backgroundColor: "inherit" }}
             >
                 <TableContainer sx={{ backgroundColor: "inherit"}}>
-                    <Table size="small" sx={{ border : '1px solid', borderColor: theme.palette.grey[300] }}>
+                    <Table size="small" sx={{ 
+                        '& .MuiTableCell-root': {
+                            borderColor: theme.palette.grey[700]
+                        }
+                    }}>
                         <TableHead>
                             <TableRow>
-                                <TableCell align="center" sx={{ fontWeight: 'bold',  color: theme.palette.text.secondary , backgroundColor: theme.palette.primary.main }}>
+                                <TableCell padding="none" align="center" sx={{ fontWeight: 'bold',  color: theme.palette.text.secondary , backgroundColor: theme.palette.primary.main, fontSize: isMobile ? "0.6rem" : '1rem', whiteSpace: 'nowrap' }}>
                                     スコア統計
                                 </TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold',  color: theme.palette.text.secondary , backgroundColor: theme.palette.primary.main }}>
-                                    平均値
-                                </TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold',  color: theme.palette.text.secondary , backgroundColor: theme.palette.primary.main }}>
-                                    中央値
-                                </TableCell>
+                                {items.map((item, index) => {
+                                    const title = item.replace(/平均値|中央値/g, '').trim();
+                                    const maxAverage = maxValue(avarageRow[item]?.max) || '-';
+                                    return (
+                                        <TableCell padding="none" key={item} align="center" sx={{ 
+                                            fontWeight: 'bold',  
+                                            color: theme.palette.text.secondary, 
+                                            backgroundColor: theme.palette.primary.main,
+                                            whiteSpace: isMobile ? 'normal' : 'nowrap'
+                                        }}>
+                                            <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: isMobile ? "0.6rem" : '1rem', }}>
+                                                <span style={{"whiteSpace": "nowrap"}}>{title}</span> <span style={{"whiteSpace": "nowrap"}}>（MAX {maxAverage}）</span>
+                                            </Typography>
+                                        </TableCell>
+                                    );
+                                })}
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {items.map((item, index) => {
-                                const averageKey = averageKeys[index];
-                                const medianKey = medianKeys[index];
-                                const title = item.replace(/平均値|中央値/g, '').trim();
-                                const maxAverage = maxValue(avarageRow[averageKey]?.max) || '-';
-                                const averageData = avarageRow[averageKey];
-                                const medianData = medianRow[medianKey];
-
-                                return (
-                                    <TableRow key={item}>
-                                        <TableCell align="center" sx={{ fontWeight: 'medium', color: theme.palette.common.white, }}>
-                                            <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: isMobile ? "0.6rem" : '1rem', }}>
-                                                {title}（MAX {maxAverage || '-'}）
-                                            </Typography>
-                                            {/* <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: isMobile ? "0.6rem" : '1rem', }}>
-                                                （MAX {maxAverage || '-'}）
-                                            </Typography> */}
-                                        </TableCell>
-                                        <TableCell align="center" sx={{
+                            <TableRow>
+                                <TableCell align="center" sx={{ fontWeight: 'bold', color: theme.palette.common.white, fontSize: isMobile ? "0.6rem" : '1rem', whiteSpace: 'nowrap' }}>
+                                    平均値
+                                </TableCell>
+                                {items.map((item, index) => {
+                                    const averageKey = averageKeys[index];
+                                    const averageData = avarageRow[averageKey];
+                                    return (
+                                        <TableCell key={`avg-${item}`} align="center" sx={{
                                             whiteSpace: 'nowrap',
                                             fontWeight: 'bold',
                                             color: theme.palette.common.white,
@@ -86,7 +88,18 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
                                         }}>
                                             <Box>{averageData?.value || '-'}</Box>
                                         </TableCell>
-                                        <TableCell align="center" sx={{
+                                    );
+                                })}
+                            </TableRow>
+                            <TableRow>
+                                <TableCell align="center" sx={{ fontWeight: 'bold', color: theme.palette.common.white, fontSize: isMobile ? "0.6rem" : '1rem', whiteSpace: 'nowrap' }}>
+                                    中央値
+                                </TableCell>
+                                {items.map((item, index) => {
+                                    const medianKey = medianKeys[index];
+                                    const medianData = medianRow[medianKey];
+                                    return (
+                                        <TableCell key={`med-${item}`} align="center" sx={{
                                             whiteSpace: 'nowrap',
                                             fontWeight: 'bold',
                                             color: theme.palette.common.white,
@@ -94,9 +107,9 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
                                         }}>
                                             <Box>{medianData?.value || '-'}</Box>
                                         </TableCell>
-                                    </TableRow>
-                                );
-                            })}
+                                    );
+                                })}
+                            </TableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>
