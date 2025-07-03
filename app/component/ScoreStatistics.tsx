@@ -1,5 +1,5 @@
 import { Box, Paper, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useMediaQuery } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { createTheme, ThemeProvider, useTheme } from "@mui/material/styles";
 
 interface ScoreStatisticsProps {
     avarageRow: {
@@ -19,6 +19,27 @@ interface ScoreStatisticsProps {
 export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+    const tableTheme = createTheme({
+        components: {
+            MuiTableCell: {
+                styleOverrides: {
+                head: {
+                    backgroundColor: '#00DE90',
+                    color: '#000000',
+                    fontFamily: 'Montserrat, sans-serif',
+                    lineHeight: '0.8rem',
+                },
+                body: {
+                    color: '#FFFFFF',
+                    backgroundColor: '#0A2D1D',
+                    fontSize: '1rem',
+                    whiteSpace: 'nowrap',
+                },
+            },
+            },
+        },
+    });
 
     // データが空の場合は何も表示しない
     if (!avarageRow || !medianRow || Object.keys(avarageRow).length === 0 || Object.keys(medianRow).length === 0) {
@@ -42,6 +63,7 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
                 elevation={2}
                 sx={{ backgroundColor: "inherit" }}
             >
+                <ThemeProvider theme={tableTheme}>
                 <TableContainer sx={{ backgroundColor: "inherit"}}>
                     <Table size="small" sx={{ 
                         '& .MuiTableCell-root': {
@@ -50,22 +72,22 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
                     }}>
                         <TableHead>
                             <TableRow>
-                                <TableCell padding="none" align="center" sx={{ fontWeight: 'bold',  color: theme.palette.text.secondary , backgroundColor: theme.palette.primary.main, fontSize: isMobile ? "0.6rem" : '1rem', whiteSpace: 'nowrap' }}>
+                                <TableCell align="center" sx={{  backgroundColor: theme.palette.primary.main, fontSize: isMobile ? "0.6rem" : '0.875rem', whiteSpace: 'nowrap', padding: isMobile ? '4px' : '8px' }}>
                                     スコア統計
                                 </TableCell>
                                 {items.map((item, index) => {
                                     const title = item.replace(/平均値|中央値/g, '').trim();
                                     const maxAverage = maxValue(avarageRow[item]?.max) || '-';
                                     return (
-                                        <TableCell padding="none" key={item} align="center" sx={{ 
-                                            fontWeight: 'bold',  
+                                        <TableCell key={item} align="center" sx={{ 
                                             color: theme.palette.text.secondary, 
                                             backgroundColor: theme.palette.primary.main,
-                                            whiteSpace: isMobile ? 'normal' : 'nowrap'
+                                            fontSize: isMobile ? "0.6rem" : '0.875rem',
+                                            whiteSpace: isMobile ? 'normal' : 'nowrap', 
+                                            padding: isMobile ? '4px' : '8px'
                                         }}>
-                                            <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: isMobile ? "0.6rem" : '1rem', }}>
+                                            
                                                 <span style={{"whiteSpace": "nowrap"}}>{title}</span> <span style={{"whiteSpace": "nowrap"}}>（MAX {maxAverage}）</span>
-                                            </Typography>
                                         </TableCell>
                                     );
                                 })}
@@ -73,7 +95,7 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
                         </TableHead>
                         <TableBody>
                             <TableRow>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', color: theme.palette.common.white, fontSize: isMobile ? "0.6rem" : '1rem', whiteSpace: 'nowrap' }}>
+                                <TableCell align="center" sx={{  color: theme.palette.common.white, fontSize: isMobile ? "0.6rem" : '1rem', whiteSpace: 'nowrap' }}>
                                     平均値
                                 </TableCell>
                                 {items.map((item, index) => {
@@ -82,7 +104,6 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
                                     return (
                                         <TableCell key={`avg-${item}`} align="center" sx={{
                                             whiteSpace: 'nowrap',
-                                            fontWeight: 'bold',
                                             color: theme.palette.common.white,
                                             fontSize: isMobile ? "0.6rem" : '1rem',
                                         }}>
@@ -92,7 +113,7 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
                                 })}
                             </TableRow>
                             <TableRow>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', color: theme.palette.common.white, fontSize: isMobile ? "0.6rem" : '1rem', whiteSpace: 'nowrap' }}>
+                                <TableCell align="center" sx={{ color: theme.palette.common.white, fontSize: isMobile ? "0.6rem" : '1rem', whiteSpace: 'nowrap' }}>
                                     中央値
                                 </TableCell>
                                 {items.map((item, index) => {
@@ -101,7 +122,6 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
                                     return (
                                         <TableCell key={`med-${item}`} align="center" sx={{
                                             whiteSpace: 'nowrap',
-                                            fontWeight: 'bold',
                                             color: theme.palette.common.white,
                                             fontSize: isMobile ? "0.6rem" : '1rem',
                                         }}>
@@ -113,6 +133,7 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
                         </TableBody>
                     </Table>
                 </TableContainer>
+                </ThemeProvider>
             </Paper>
         </Box>
     );
