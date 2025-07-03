@@ -14,6 +14,7 @@ import { Ranking } from "~/component/Ranking";
 import { Header } from "~/component/Header";
 import { RuleModal } from "~/component/RuleModal";
 import { ChallengeSongs } from "~/component/ChallengeSongs";
+import { ScoreStatistics } from "~/component/ScoreStatistics";
 import { Footer } from "~/component/Footer";
 import { useRankingData } from "~/hooks/useRankingData";
 import { theme as appTheme } from "~/styles/theme";
@@ -100,6 +101,10 @@ export default function Index() {
                     {!isLoadingSheets && !isLoadingData && showingRankingData && (
                         <>
                             <ChallengeSongs songs={showingRankingData.songs} />
+                            <ScoreStatistics 
+                                avarageRow={showingRankingData.avarageRow}
+                                medianRow={showingRankingData.medianRow}
+                            />
                             <Ranking header={showingRankingData.header} dataRow={showingRankingData.rankingList} />
                             <Box
                                 sx={{

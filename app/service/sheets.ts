@@ -13,6 +13,18 @@ export type RankingVM = {
     }[]
     header: string[]
     rankingList: string[][]
+    avarageRow: {
+        [key: string]: {
+            max: string;
+            value: string;
+        }
+    }
+    medianRow: {
+        [key: string]: {
+            max: string;
+            value: string;
+        }
+    }
     lastUpdated: string // 最終更新日
 }
 
@@ -78,12 +90,59 @@ const getSheetData = async (sheetName: string): Promise<RankingVM> => {
         rankingList.push(jsonValues[i].slice(1));
     }
 
+    const avarageRowIndex = jsonValues.findIndex((v: string[]) => {
+        return v.includes("TOTAL 平均値")
+    });
+    const avarageRow: {[key: string]: {
+        max: string;
+        value: string;
+    }} = {
+        [jsonValues[avarageRowIndex][2] ]: {
+            max: jsonValues[avarageRowIndex + 1][2],
+            value: jsonValues[avarageRowIndex + 1][3], 
+        }
+    };
+    for (let i = 4; i < header.length; i=i+2) {
+        if (!jsonValues[avarageRowIndex][i]) {
+            break; // ヘッダーが空の場合は終了
+        }
+        avarageRow[jsonValues[avarageRowIndex][i]] = {
+            max: jsonValues[avarageRowIndex + 1][i],
+            value: jsonValues[avarageRowIndex + 1][i + 1],
+        }
+    }
+
+    const medianRowIndex = jsonValues.findIndex((v: string[]) => {
+        return v.includes("TOTAL 中央値")
+    });
+    const medianRow: {[key: string]: {
+        max: string;
+        value: string;
+    }} = {
+        [jsonValues[medianRowIndex][2] ]: {
+            max: jsonValues[medianRowIndex + 1][2],
+            value: jsonValues[medianRowIndex + 1][3], 
+        }
+    };
+    for (let i = 4; i < header.length; i=i+2) {
+        if (!jsonValues[medianRowIndex][i]) {
+            break; // ヘッダーが空の場合は終了
+        }
+        medianRow[jsonValues[medianRowIndex][i]] = {
+            max: jsonValues[medianRowIndex + 1][i],
+            value: jsonValues[medianRowIndex + 1][i + 1],
+        }
+    }   
+
+
     return {
         title,
         startDate,
         songs,
         header,
         rankingList,
+        avarageRow,
+        medianRow,
         lastUpdated: lastUpdated || '', // lastUpdatedが存在しない場合は空文字列を設定
     }
 }
