@@ -91,48 +91,60 @@ const getSheetData = async (sheetName: string): Promise<RankingVM> => {
     }
 
     const avarageRowIndex = jsonValues.findIndex((v: string[]) => {
-        return v.includes("TOTAL 平均値")
+        // 平均値の行を探す("平均値"が含まれる行、正規表現を使用)
+        return v.some(cell => /平均値/.test(cell));
     });
-    const avarageRow: {[key: string]: {
-        max: string;
-        value: string;
-    }} = {
-        [jsonValues[avarageRowIndex][2] ]: {
+
+    const avarageRow: {
+        [key: string]: {
+            max: string;
+            value: string;
+        }
+    } = avarageRowIndex === -1 ? {} : {
+        [jsonValues[avarageRowIndex][2]]: {
             max: jsonValues[avarageRowIndex + 1][2],
-            value: jsonValues[avarageRowIndex + 1][3], 
+            value: jsonValues[avarageRowIndex + 1][3],
         }
     };
-    for (let i = 4; i < header.length; i=i+2) {
-        if (!jsonValues[avarageRowIndex][i]) {
-            break; // ヘッダーが空の場合は終了
-        }
-        avarageRow[jsonValues[avarageRowIndex][i]] = {
-            max: jsonValues[avarageRowIndex + 1][i],
-            value: jsonValues[avarageRowIndex + 1][i + 1],
+    if (avarageRowIndex != -1) {
+        for (let i = 4; i < header.length; i = i + 2) {
+            if (!jsonValues[avarageRowIndex][i]) {
+                break; // ヘッダーが空の場合は終了
+            }
+            avarageRow[jsonValues[avarageRowIndex][i]] = {
+                max: jsonValues[avarageRowIndex + 1][i],
+                value: jsonValues[avarageRowIndex + 1][i + 1],
+            }
         }
     }
 
     const medianRowIndex = jsonValues.findIndex((v: string[]) => {
-        return v.includes("TOTAL 中央値")
+        // 中央値の行を探す("中央値"が含まれる行、正規表現を使用)
+        return v.some(cell => /中央値/.test(cell));
+
     });
-    const medianRow: {[key: string]: {
-        max: string;
-        value: string;
-    }} = {
-        [jsonValues[medianRowIndex][2] ]: {
+    const medianRow: {
+        [key: string]: {
+            max: string;
+            value: string;
+        }
+    } = medianRowIndex === -1 ? {} : {
+        [jsonValues[medianRowIndex][2]]: {
             max: jsonValues[medianRowIndex + 1][2],
-            value: jsonValues[medianRowIndex + 1][3], 
+            value: jsonValues[medianRowIndex + 1][3],
         }
     };
-    for (let i = 4; i < header.length; i=i+2) {
-        if (!jsonValues[medianRowIndex][i]) {
-            break; // ヘッダーが空の場合は終了
+    if (medianRowIndex != -1) {
+        for (let i = 4; i < header.length; i = i + 2) {
+            if (!jsonValues[medianRowIndex][i]) {
+                break; // ヘッダーが空の場合は終了
+            }
+            medianRow[jsonValues[medianRowIndex][i]] = {
+                max: jsonValues[medianRowIndex + 1][i],
+                value: jsonValues[medianRowIndex + 1][i + 1],
+            }
         }
-        medianRow[jsonValues[medianRowIndex][i]] = {
-            max: jsonValues[medianRowIndex + 1][i],
-            value: jsonValues[medianRowIndex + 1][i + 1],
-        }
-    }   
+    }
 
 
     return {
@@ -154,9 +166,9 @@ export const getAllRankingSheets = async (): Promise<RankingVM[]> => {
         console.error('Failed to get sheet names:', getSheetsError);
         throw getSheetsError;
     }
-    
+
     const results: RankingVM[] = [];
-    
+
     for (const sheetName of sheetNames) {
         const [getSheetDataError, sheetData] = await to(getSheetData(sheetName));
         if (getSheetDataError) {
@@ -166,7 +178,7 @@ export const getAllRankingSheets = async (): Promise<RankingVM[]> => {
         }
         results.push(sheetData);
     }
-    
+
     return results;
 }
 

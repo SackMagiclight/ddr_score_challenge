@@ -27,9 +27,11 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
 
     // 項目名を抽出（「 平均値」「 中央値」を除去）
     const averageKeys = Object.keys(avarageRow);
-    const items = averageKeys.map(key => key.replace(' 平均値', ''));
+    const medianKeys = Object.keys(medianRow);
+    const items = averageKeys;
 
-    const maxValue = (maxString: string) => {
+    const maxValue = (maxString?: string) => {
+        if (!maxString) return '-';
         const value = maxString.split(" ")[1];
         return value ? parseFloat(value).toLocaleString() : 0;
     }
@@ -65,21 +67,24 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {items.map((item) => {
-                                const averageKey = `${item} 平均値`;
-                                const medianKey = `${item} 中央値`;
+                            {items.map((item, index) => {
+                                const averageKey = averageKeys[index];
+                                const medianKey = medianKeys[index];
+                                const title = item.replace(/平均値|中央値/g, '').trim();
                                 const maxAverage = maxValue(avarageRow[averageKey]?.max) || '-';
                                 const averageData = avarageRow[averageKey];
-                                const avarageMaxDiff = (parseFloat(avarageRow[averageKey]?.max.split(" ")[1]) || 0) - (parseFloat(averageData?.value?.replace(/,/g, "")) || 0);
+                                const avarageMaxDiff = (parseFloat(avarageRow[averageKey]?.max?.split(" ")[1]) || 0) - (parseFloat(averageData?.value?.replace(/,/g, "")) || 0);
                                 const medianData = medianRow[medianKey];
-                                const medianMaxDiff = (parseFloat(medianRow[medianKey]?.max.split(" ")[1]) || 0) - (parseFloat(medianData?.value?.replace(/,/g, "")) || 0);
+                                const medianMaxDiff = (parseFloat(medianRow[medianKey]?.max?.split(" ")[1]) || 0) - (parseFloat(medianData?.value?.replace(/,/g, "")) || 0);
 
                                 return (
                                     <TableRow key={item}>
                                         <TableCell align="center" sx={{ fontWeight: 'medium', backgroundColor: theme.palette.grey[50], color: theme.palette.common.black }}>
                                             <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: isMobile ? "0.6rem" : '1rem', }}>
-                                                <Box>{item}</Box>
-                                                <Box>（MAX {maxAverage || '-'}）</Box>
+                                                {title}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: isMobile ? "0.6rem" : '1rem', }}>
+                                                （MAX {maxAverage || '-'}）
                                             </Typography>
                                         </TableCell>
                                         <TableCell align="center" sx={{
