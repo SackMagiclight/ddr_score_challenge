@@ -54,7 +54,7 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
     const maxValue = (maxString?: string) => {
         if (!maxString) return '-';
         const value = maxString.split(" ")[1];
-        return value ? parseFloat(value).toLocaleString() : 0;
+        return value ? parseFloat(value.replace(",", "")).toLocaleString() : 0;
     }
 
     return (
