@@ -40,25 +40,36 @@ export const ChallengeSongs = ({ songs }: ChallengeSongsProps) => {
                 </Typography>
                 <List sx={{
                     p: 0,
+                    maxWidth: "100%",
+                    overflowX: "auto",
+                    overflowY: "hidden",
                 }}>
                     {songs.map((song, index) => (
                         <ListItem disablePadding dense key={index}>
-                            <ListItemText primary={
-                                <Box
-                                    sx={{
-                                        md: {
-                                            fontSize: '2rem',
-                                            lineHeight: '2rem',
-                                        },
-                                        fontSize: '1.7rem',
-                                        lineHeight: '1.7rem',
-                                        color: "#000000",
-                                        fontFamily: '"Special Gothic Condensed One", sans-serif',
-                                    }}
-                                >
-                                    {`${song.title} (${song.difficulty})`}
-                                </Box>
-                            } />
+                            <ListItemText
+                                sx={{
+                                    marginTop: "2px",
+                                    marginBottom: "2px",
+                                }}
+                                primary={
+                                    <Box
+                                        sx={{
+                                            fontSize: {
+                                                xs: '1.2rem',
+                                                md: '1.6rem',
+                                            },
+                                            lineHeight: {
+                                                xs: '1.2rem',
+                                                md: '1.6rem',
+                                            },
+                                            whiteSpace: 'nowrap',
+                                            color: "#000000",
+                                            fontFamily: '"Special Gothic Condensed One", sans-serif',
+                                        }}
+                                    >
+                                        {`${song.title} (${song.difficulty})`}
+                                    </Box>
+                                } />
                         </ListItem>
                     ))}
                 </List>

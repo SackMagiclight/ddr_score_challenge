@@ -109,8 +109,9 @@ export const Ranking = ({ header, dataRow }: RankingProps) => {
                                     const total = header[2];
                                     return (<TableCell sx={{
                                         ...(isMobile ? getStickyCellStyleFromRowNumber(index, false) : {}),
+                                        ...(isMobile ? { borderRight: '2px solid rgba(255, 255, 255, 0.8)' } : {}),
                                         ...getColStyleFromIndex(index),
-                                        ...{ "paddingLeft": "6px", "paddingRight": "6px", }
+                                        ...{ "paddingLeft": "6px", "paddingRight": "6px" },
                                     }} key={index}><Stack direction="row" spacing={0} alignItems="center" width={"100%"}>
                                             <Box sx={{ width: "30px" }} >{order}</Box>
                                             <Box sx={isMobile ? { width: "100px" } : { flexGrow: 1 }} >{name}</Box>
@@ -153,6 +154,7 @@ export const Ranking = ({ header, dataRow }: RankingProps) => {
                                             const centerStyle = index === 2 ? { textAlign: 'center' } : {};
                                             return (<TableCell sx={{
                                                 ...(isMobile ? getStickyCellStyleFromRowNumber(index, true) : {}),
+                                                ...(isMobile ? { borderRight: '2px solid rgba(255, 255, 255, 0.8)' } : {}),
                                                 ...getColStyleFromIndex(index),
                                                 ...{ "paddingLeft": "6px", "paddingRight": "6px", },
                                                 ...{ '&:last-child td, &:last-child th': { border: 0 } }
