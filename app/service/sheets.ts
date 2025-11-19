@@ -70,10 +70,12 @@ const getSheetData = async (sheetName: string): Promise<RankingVM> => {
     const title = jsonValues[1][1];
     const startDate = jsonValues[2][1];
     let songs: RankingVM["songs"] = [];
+    const songTitleIndex = jsonValues[4].indexOf("課題曲");
+    const songModeDiffIndex = jsonValues[4].indexOf("難易度");
     for (let i = 5; jsonValues[i].length != 0; i++) {
-        const songModeDiffString = jsonValues[i][4].split('/');
+        const songModeDiffString = jsonValues[i][songModeDiffIndex].split('/');
         songs.push({
-            title: jsonValues[i][1],
+            title: jsonValues[i][songTitleIndex],
             mode: songModeDiffString[0].trim(),
             difficulty: songModeDiffString[1].trim(),
         });
