@@ -3,7 +3,6 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { copyFileSync } from "node:fs";
 import { join } from "node:path";
-import devtoolsJson from 'vite-plugin-devtools-json';
 
 declare module "@remix-run/node" {
   interface Future {
@@ -34,6 +33,5 @@ export default defineConfig({
       },
     }),
     tsconfigPaths(),
-    devtoolsJson(),
   ],
 });
