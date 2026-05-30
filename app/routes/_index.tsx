@@ -105,6 +105,7 @@ export default function Index() {
                             <Box
                                 sx={{
                                     textAlign: 'right',
+                                    fontSize: { xs: '0.6rem', sm: '1rem' },
                                 }}
                             >{showingRankingData.lastUpdated}</Box>
                             <ScoreStatistics 
