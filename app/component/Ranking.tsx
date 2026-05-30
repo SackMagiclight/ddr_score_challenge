@@ -110,12 +110,13 @@ export const Ranking = ({ header, dataRow }: RankingProps) => {
                                     return (<TableCell sx={{
                                         ...(isMobile ? getStickyCellStyleFromRowNumber(index, false) : {}),
                                         ...(isMobile ? { borderRight: '2px solid rgba(255, 255, 255, 0.8)' } : {}),
+                                        ...{ fontSize: isMobile ? "0.6rem" : '1rem' },
                                         ...getColStyleFromIndex(index),
                                         ...{ "paddingLeft": "6px", "paddingRight": "6px" },
                                     }} key={index}><Stack direction="row" spacing={0} alignItems="center" width={"100%"}>
-                                            <Box sx={{ width: "30px" }} >{order}</Box>
-                                            <Box sx={isMobile ? { width: "100px" } : { flexGrow: 1 }} >{name}</Box>
-                                            <Box sx={{ width: "70px" }} >{total}</Box>
+                                            <Box sx={{ width: isMobile ? "20px" : "30px" }} >{order}</Box>
+                                            <Box sx={isMobile ? { width: "80px" } : { flexGrow: 1 }} >{name}</Box>
+                                            <Box sx={{ width: isMobile ? "50px" : "70px" }} >{total}</Box>
                                         </Stack></TableCell>)
                                 })
                             }
@@ -125,7 +126,8 @@ export const Ranking = ({ header, dataRow }: RankingProps) => {
                                 return (
                                     <TableCell sx={{
                                         ...centerStyle,
-                                        ...{ "paddingLeft": "6px", "paddingRight": "6px", }
+                                        ...{ "paddingLeft": "6px", "paddingRight": "6px", },
+                                        ...{ fontSize: isMobile ? "0.6rem" : '1rem' },
                                     }} key={index}>{h}</TableCell>
                                 )
 
@@ -136,7 +138,8 @@ export const Ranking = ({ header, dataRow }: RankingProps) => {
                                     return (<TableCell sx={{
                                         ...(isMobile ? getStickyCellStyleFromRowNumber(index, false) : {}),
                                         ...getColStyleFromIndex(index),
-                                        ...{ "paddingLeft": "6px", "paddingRight": "6px", }
+                                        ...{ "paddingLeft": "6px", "paddingRight": "6px", },
+                                        ...{ fontSize: isMobile ? "0.6rem" : '1rem' },
                                     }} key={index}>{h}</TableCell>)
                                 })
                             }
@@ -157,12 +160,13 @@ export const Ranking = ({ header, dataRow }: RankingProps) => {
                                                 ...(isMobile ? { borderRight: '2px solid rgba(255, 255, 255, 0.8)' } : {}),
                                                 ...getColStyleFromIndex(index),
                                                 ...{ "paddingLeft": "6px", "paddingRight": "6px", },
-                                                ...{ '&:last-child td, &:last-child th': { border: 0 } }
+                                                ...{ '&:last-child td, &:last-child th': { border: 0 } },
+                                                ...{ fontSize: isMobile ? "0.6rem" : '1rem', }
                                             }} key={index}>
                                                 <Stack direction="row" spacing={0} alignItems="start" width={"100%"}>
-                                                    <Box sx={{ width: "30px" }} >{order}</Box>
-                                                    <Box sx={isMobile ? { width: "100px" } : { flexGrow: 1 }} >{name}</Box>
-                                                    <Box sx={{ width: "70px" }} >{total}</Box>
+                                                    <Box sx={{ width: isMobile ? "20px" : "30px" }} >{order}</Box>
+                                                    <Box sx={isMobile ? { width: "80px" } : { flexGrow: 1 }} >{name}</Box>
+                                                    <Box sx={{ width: isMobile ? "50px" : "70px" }} >{total}</Box>
                                                 </Stack>
                                             </TableCell>)
                                         })
@@ -175,7 +179,8 @@ export const Ranking = ({ header, dataRow }: RankingProps) => {
                                             <TableCell sx={{
                                                 ...{ "paddingLeft": "6px", "paddingRight": "6px", },
                                                 ...centerStyle,
-                                                ...{ '&:last-child td, &:last-child th': { border: 0 } }
+                                                ...{ '&:last-child td, &:last-child th': { border: 0 } },
+                                                ...{ fontSize: isMobile ? "0.6rem" : '1rem', }
                                             }} key={index}>
                                                 <div>{h2}</div>
                                                 <div>{h1}</div>
@@ -191,7 +196,8 @@ export const Ranking = ({ header, dataRow }: RankingProps) => {
                                                 ...(isMobile ? getStickyCellStyleFromRowNumber(index, true) : {}),
                                                 ...getColStyleFromIndex(index),
                                                 ...{ "paddingLeft": "6px", "paddingRight": "6px", },
-                                                ...{ '&:last-child td, &:last-child th': { border: 0 } }
+                                                ...{ '&:last-child td, &:last-child th': { border: 0 } },
+                                                ...{ fontSize: isMobile ? "0.6rem" : '1rem', }
                                             }} key={index}>
                                                 <Stack direction="column" spacing={0} alignItems="end" width={"fit-content"}>
                                                     <Box>{d.format("YYYY-MM-DD")}</Box>
