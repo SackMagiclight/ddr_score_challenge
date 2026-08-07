@@ -1,15 +1,11 @@
 import {
-    Box,
     createTheme,
-    Stack,
-    SxProps,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
-    Theme,
     ThemeProvider,
     useMediaQuery,
     useTheme
@@ -51,34 +47,20 @@ const tableTheme = createTheme({
     },
 });
 
-function getStickyCellStyle(width: number, zIndex: number, left: number) {
-    return {
-        position: "sticky",
-        left: left,
-        width: width,
-        zIndex: zIndex,
-    };
-}
+const getCellLayoutStyle = (isMobile: boolean) => ({
+    fontSize: isMobile ? "0.6rem" : '1rem',
+    paddingLeft: isMobile ? "2px" : "6px",
+    paddingRight: isMobile ? "2px" : "6px",
+});
 
-const getStickyCellStyleFromRowNumber = (rowNumber: number, isCol: boolean) => {
-    switch (rowNumber) {
-        case 0:
-            return getStickyCellStyle(30, 100 - (isCol ? 1 : 0), 0);
-        case 1:
-            return getStickyCellStyle(120, 100 - (isCol ? 1 : 0), 30);
-        case 2:
-            return getStickyCellStyle(130, 100 - (isCol ? 1 : 0), 124);
-        default:
-            return {};
-    }
-}
-
-const getColStyleFromIndex = (index: number): SxProps<Theme> => {
+const getColStyleFromIndex = (index: number) => {
     switch (index) {
         case 0:
-            return { textAlign: 'center' };
+            return { textAlign: 'center' as const };
+        case 1:
+            return { textAlign: 'center' as const };
         case 2:
-            return { textAlign: 'center', fontWeight: 'bold' };
+            return { textAlign: 'center' as const, fontWeight: 'bold' as const };
         default:
             return {};
     }
@@ -98,37 +80,31 @@ export const Ranking = ({ header, dataRow }: RankingProps) => {
     }
     return (
         <ThemeProvider theme={tableTheme}>
-            <TableContainer sx={{ maxHeight: 'calc(100vh - 200px)' }}>
-                <Table size="small" stickyHeader aria-label="ranking table">
+            <TableContainer sx={{ maxHeight: 'calc(100vh - 200px)', overflowX: 'hidden' }}>
+                <Table
+                    size="small"
+                    stickyHeader
+                    aria-label="ranking table"
+                    sx={{
+                        tableLayout: 'fixed',
+                        width: '100%',
+                    }}
+                >
                     <TableHead>
                         <TableRow>
-                            {
-                                [0].map((index) => {
-                                    const order = header[0];
-                                    const name = header[1];
-                                    const total = header[2];
-                                    return (<TableCell sx={{
-                                        ...(isMobile ? getStickyCellStyleFromRowNumber(index, false) : {}),
-                                        ...(isMobile ? { borderRight: '2px solid rgba(255, 255, 255, 0.8)' } : {}),
-                                        ...{ fontSize: isMobile ? "0.6rem" : '1rem' },
-                                        ...getColStyleFromIndex(index),
-                                        ...{ "paddingLeft": "6px", "paddingRight": "6px" },
-                                    }} key={index}><Stack direction="row" spacing={0} alignItems="center" width={"100%"}>
-                                            <Box sx={{ width: isMobile ? "20px" : "30px" }} >{order}</Box>
-                                            <Box sx={isMobile ? { width: "80px" } : { flexGrow: 1 }} >{name}</Box>
-                                            <Box sx={{ width: isMobile ? "50px" : "70px" }} >{total}</Box>
-                                        </Stack></TableCell>)
-                                })
-                            }
-                            {indexSet.map((indexes, index) => {
+                            {[0, 1, 2].map((index) => (
+                                <TableCell sx={{
+                                    ...getColStyleFromIndex(index),
+                                    ...getCellLayoutStyle(isMobile),
+                                }} key={index}>{header[index]}</TableCell>
+                            ))}
+                            {indexSet.map((indexes) => {
                                 const h = header[indexes[0]];
-                                const centerStyle = indexes.length > 1 ? { textAlign: 'center' } : {};
                                 return (
                                     <TableCell sx={{
-                                        ...centerStyle,
-                                        ...{ "paddingLeft": "6px", "paddingRight": "6px", },
-                                        ...{ fontSize: isMobile ? "0.6rem" : '1rem' },
-                                    }} key={index}>{h}</TableCell>
+                                        textAlign: 'center',
+                                        ...getCellLayoutStyle(isMobile),
+                                    }} key={indexes[0]}>{h}</TableCell>
                                 )
 
                             })}
@@ -136,10 +112,9 @@ export const Ranking = ({ header, dataRow }: RankingProps) => {
                                 [datetimeColIndex].map((index) => {
                                     const h = header[index];
                                     return (<TableCell sx={{
-                                        ...(isMobile ? getStickyCellStyleFromRowNumber(index, false) : {}),
                                         ...getColStyleFromIndex(index),
-                                        ...{ "paddingLeft": "6px", "paddingRight": "6px", },
-                                        ...{ fontSize: isMobile ? "0.6rem" : '1rem' },
+                                        textAlign: isMobile ? 'center' : 'center',
+                                        ...getCellLayoutStyle(isMobile),
                                     }} key={index}>{h}</TableCell>)
                                 })
                             }
@@ -149,39 +124,20 @@ export const Ranking = ({ header, dataRow }: RankingProps) => {
                         {dataRow.map((row, index) => (
                             <TableRow key={index}>
                                 <>
-                                    {
-                                        [0].map((index) => {
-                                            const order = row[0];
-                                            const name = row[1];
-                                            const total = row[2];
-                                            const centerStyle = index === 2 ? { textAlign: 'center' } : {};
-                                            return (<TableCell sx={{
-                                                ...(isMobile ? getStickyCellStyleFromRowNumber(index, true) : {}),
-                                                ...(isMobile ? { borderRight: '2px solid rgba(255, 255, 255, 0.8)' } : {}),
-                                                ...getColStyleFromIndex(index),
-                                                ...{ "paddingLeft": "6px", "paddingRight": "6px", },
-                                                ...{ '&:last-child td, &:last-child th': { border: 0 } },
-                                                ...{ fontSize: isMobile ? "0.6rem" : '1rem', }
-                                            }} key={index}>
-                                                <Stack direction="row" spacing={0} alignItems="start" width={"100%"}>
-                                                    <Box sx={{ width: isMobile ? "20px" : "30px" }} >{order}</Box>
-                                                    <Box sx={isMobile ? { width: "80px" } : { flexGrow: 1 }} >{name}</Box>
-                                                    <Box sx={{ width: isMobile ? "50px" : "70px" }} >{total}</Box>
-                                                </Stack>
-                                            </TableCell>)
-                                        })
-                                    }
-                                    {indexSet.map((indexes, index) => {
+                                    {[0, 1, 2].map((columnIndex) => (
+                                        <TableCell sx={{
+                                            ...getColStyleFromIndex(columnIndex),
+                                            ...getCellLayoutStyle(isMobile),
+                                        }} key={columnIndex}>{row[columnIndex]}</TableCell>
+                                    ))}
+                                    {indexSet.map((indexes) => {
                                         const h1 = indexes.length === 1 ? row[indexes[0]] : `(${row[indexes[0]]})`;
                                         const h2 = indexes.length > 1 ? row[indexes[1]] : null;
-                                        const centerStyle = indexes.length > 1 ? { textAlign: 'center' } : {};
                                         return (
                                             <TableCell sx={{
-                                                ...{ "paddingLeft": "6px", "paddingRight": "6px", },
-                                                ...centerStyle,
-                                                ...{ '&:last-child td, &:last-child th': { border: 0 } },
-                                                ...{ fontSize: isMobile ? "0.6rem" : '1rem', }
-                                            }} key={index}>
+                                                textAlign: 'center',
+                                                ...getCellLayoutStyle(isMobile),
+                                            }} key={indexes[0]}>
                                                 <div>{h2}</div>
                                                 <div>{h1}</div>
                                             </TableCell>
@@ -193,16 +149,12 @@ export const Ranking = ({ header, dataRow }: RankingProps) => {
                                             const h = row[index];
                                             const d = dayjs(h);
                                             return (<TableCell sx={{
-                                                ...(isMobile ? getStickyCellStyleFromRowNumber(index, true) : {}),
                                                 ...getColStyleFromIndex(index),
-                                                ...{ "paddingLeft": "6px", "paddingRight": "6px", },
-                                                ...{ '&:last-child td, &:last-child th': { border: 0 } },
-                                                ...{ fontSize: isMobile ? "0.6rem" : '1rem', }
+                                                textAlign: isMobile ? 'center' : 'center',
+                                                ...getCellLayoutStyle(isMobile),
                                             }} key={index}>
-                                                <Stack direction="column" spacing={0} alignItems="end" width={"fit-content"}>
-                                                    <Box>{d.format("YYYY-MM-DD")}</Box>
-                                                    <Box>{d.format("HH:mm:ss")}</Box>
-                                                </Stack>
+                                                <div>{d.format("YYYY-MM-DD")}</div>
+                                                <div>{d.format("HH:mm:ss")}</div>
                                             </TableCell>)
                                         })
                                     }</>
