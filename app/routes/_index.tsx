@@ -7,8 +7,7 @@ import {
     Paper,
     SelectChangeEvent,
     Stack,
-    ThemeProvider,
-    Typography
+    ThemeProvider
 } from "@mui/material";
 import { Ranking } from "~/component/Ranking";
 import { Header } from "~/component/Header";

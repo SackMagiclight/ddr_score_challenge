@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import to from "await-to-js";
+import { to } from "await-to-js";
 import { getAllSheets, getRankingSheets, RankingVM } from "~/service/sheets";
 
 export const useRankingData = () => {
@@ -31,33 +31,36 @@ export const useRankingData = () => {
 
     // 選択されたランキングタイトルに基づいてデータを取得
     useEffect(() => {
-        if (!selectedRankingTitle) return;
+        if (!selectedRankingTitle || rankingDataCache[selectedRankingTitle]) return;
 
-        if (rankingDataCache[selectedRankingTitle]) {
-            setShowingRankingData(rankingDataCache[selectedRankingTitle]);
-        } else {
-            (async () => {
-                setIsLoadingData(true);
-                const [getSheetDataError, sheetData] = await to(getRankingSheets(selectedRankingTitle));
-                if (getSheetDataError) {
-                    console.error(getSheetDataError);
-                    setIsLoadingData(false);
-                    return;
-                }
-
-                setRankingDataCache((prev) => {
-                    return { ...prev, [selectedRankingTitle]: sheetData }
-                });
-                setShowingRankingData(sheetData);
+        (async () => {
+            setIsLoadingData(true);
+            const [getSheetDataError, sheetData] = await to(getRankingSheets(selectedRankingTitle));
+            if (getSheetDataError) {
+                console.error(getSheetDataError);
                 setIsLoadingData(false);
-            })();
-        }
+                return;
+            }
+
+            setRankingDataCache((prev) => {
+                return { ...prev, [selectedRankingTitle]: sheetData }
+            });
+            setShowingRankingData(sheetData);
+            setIsLoadingData(false);
+        })();
     }, [selectedRankingTitle, rankingDataCache]);
+
+    const selectRankingTitle = (title: string) => {
+        setSelectedRankingTitle(title);
+        if (rankingDataCache[title]) {
+            setShowingRankingData(rankingDataCache[title]);
+        }
+    };
 
     return {
         availableSheets,
         selectedRankingTitle,
-        setSelectedRankingTitle,
+        setSelectedRankingTitle: selectRankingTitle,
         showingRankingData,
         isLoadingSheets,
         isLoadingData,

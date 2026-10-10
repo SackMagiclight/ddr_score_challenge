@@ -1,4 +1,4 @@
-import { Box, Paper, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useMediaQuery } from "@mui/material";
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useMediaQuery } from "@mui/material";
 import { createTheme, ThemeProvider, useTheme } from "@mui/material/styles";
 
 interface ScoreStatisticsProps {
@@ -75,7 +75,7 @@ export const ScoreStatistics = ({ avarageRow, medianRow }: ScoreStatisticsProps)
                                 <TableCell align="center" sx={{  backgroundColor: theme.palette.primary.main, fontSize: isMobile ? "0.6rem" : '0.875rem', whiteSpace: 'nowrap', padding: isMobile ? '4px' : '8px' }}>
                                     スコア統計
                                 </TableCell>
-                                {items.map((item, index) => {
+                                {items.map((item) => {
                                     const title = item.replace(/平均値|中央値/g, '').trim();
                                     const maxAverage = maxValue(avarageRow[item]?.max) || '-';
                                     return (

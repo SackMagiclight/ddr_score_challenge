@@ -1,4 +1,4 @@
-import to from "await-to-js";
+import { to } from "await-to-js";
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const spreadsheetId = `1lZSSNf4Zd0N2MdEPdB_CwnZLI7pr0gv9ZALxOneveag`;
@@ -69,7 +69,7 @@ const getSheetData = async (sheetName: string): Promise<RankingVM> => {
     const jsonValues = jsonData.values as string[][];
     const title = jsonValues[1][1];
     const startDate = jsonValues[2][1];
-    let songs: RankingVM["songs"] = [];
+    const songs: RankingVM["songs"] = [];
     const songTitleIndex = jsonValues[4].indexOf("課題曲");
     const songModeDiffIndex = jsonValues[4].indexOf("難易度");
     for (let i = 5; jsonValues[i].length != 0; i++) {
